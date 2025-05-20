@@ -1,70 +1,58 @@
 const Task = require('../models/Task');
-const List = require('../models/List');
 
-// GET all tasks
-exports.getTasks = async (req, res) => {
+// Créer une tâche
+const createTask = async (req, res) => {
   try {
-    const tasks = await Task.find().populate('list');
-    res.status(200).json(tasks);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// POST new task
-exports.createTask = async (req, res) => {
-  try {
-    const { title, dateFin, isFinished, isUrgent, comment, status, list } = req.body;
-
-    const listExists = await List.findById(list);
-    if (!listExists) return res.status(400).json({ error: "Liste invalide" });
-
-    const newTask = new Task({
-      title,
-      dateFin,
-      isFinished: isFinished || false,
-      isUrgent: isUrgent || false,
-      comment,
-      status,
-      list
+    const task = new Task({
+      ...req.body,
+      user: req.user.id // récupéré via le middleware d'auth
     });
-
-    const saved = await newTask.save();
-    res.status(201).json(saved);
+    const savedTask = await task.save();
+    res.status(201).json(savedTask);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: 'Erreur lors de la création de la tâche', error: err.message });
   }
 };
 
-// GET one task by ID
-exports.getTaskById = async (req, res) => {
+// Obtenir les tâches de l'utilisateur connecté
+const getTasks = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id).populate('list');
-    if (!task) return res.status(404).json({ error: 'Tâche introuvable' });
+    const tasks = await Task.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des tâches', error: err.message });
+  }
+};
+
+// Mettre à jour une tâche
+const updateTask = async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      req.body,
+      { new: true }
+    );
+    if (!task) return res.status(404).json({ message: 'Tâche non trouvée' });
     res.json(task);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: 'Erreur lors de la mise à jour', error: err.message });
   }
 };
 
-// PUT update task
-exports.updateTask = async (req, res) => {
+// Supprimer une tâche
+const deleteTask = async (req, res) => {
   try {
-    const updated = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ error: 'Tâche introuvable' });
-    res.json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-// DELETE task
-exports.deleteTask = async (req, res) => {
-  try {
-    const deleted = await Task.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Tâche introuvable' });
+    const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+    if (!task) return res.status(404).json({ message: 'Tâche non trouvée' });
     res.json({ message: 'Tâche supprimée' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: 'Erreur lors de la suppression', error: err.message });
   }
+};
+
+module.exports = {
+  createTask,
+  getTasks,
+  updateTask,
+  deleteTask
 };

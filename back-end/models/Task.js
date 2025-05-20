@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 
-const TaskSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'Le titre de la tâche est requis'],
-    trim: true,
-    minlength: [3, 'Le titre doit contenir au moins 3 caractères']
+    required: true
   },
-  dateFin: {
-    type: Date,
-    required: [true, 'La date de fin est requise']
+  dueDate: {
+    type: Date
   },
   isFinished: {
     type: Boolean,
@@ -20,22 +17,22 @@ const TaskSchema = new mongoose.Schema({
     default: false
   },
   comment: {
-    type: String,
-    maxlength: [500, 'Le commentaire ne peut pas dépasser 500 caractères']
+    type: String
   },
   status: {
     type: String,
-    enum: {
-      values: ['pas commencé', 'en cours', 'terminé'],
-      message: 'Le statut doit être "pas commencé", "en cours" ou "terminé"'
-    },
+    enum: ['pas commencé', 'en cours', 'terminé'],
     default: 'pas commencé'
   },
-  list: {
+  category: {
+    type: String, // ou ObjectId si tu as un modèle Category
+    required: true
+  },
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'List',
-    required: [true, 'La tâche doit appartenir à une liste']
+    ref: 'User',
+    required: true
   }
-});
+}, { timestamps: true });
 
-module.exports = mongoose.model('Task', TaskSchema);
+module.exports = mongoose.model('Task', taskSchema);
