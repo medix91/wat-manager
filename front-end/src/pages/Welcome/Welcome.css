@@ -1,0 +1,36 @@
+.welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.welcome-card {
+  background: #fff;
+  padding: 3rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+.btn-start {
+  display: inline-block;
+  margin-top: 2rem;
+  background-color: var(--main-color);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-link {
+  margin-top: 1rem;
+}

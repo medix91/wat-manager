@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+    width: 90%;
+  }
+
+  .navbar {
+    flex-direction: column;
+  }
+}

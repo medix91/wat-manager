@@ -1,0 +1,8 @@
+:root {
+  --main-color: #00BF63;
+  --bg-color: #f9f9f9;
+  --text-color: #333;
+  --font-main: 'Comfortaa', sans-serif;
+  --border-radius: 12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
